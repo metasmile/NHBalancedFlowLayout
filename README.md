@@ -3,6 +3,18 @@ NHBalancedFlowLayout
 
 UICollectionViewLayout subclass for displaying items of different sizes in a grid without wasting any visual space. Inspired by: http://www.crispymtn.com/stories/the-algorithm-for-a-perfectly-balanced-photo-gallery
 
+
+## About this Fork
+
+Mainly three differences to the original:
+
+- It fixes the [Issue of upscaled images](https://github.com/njdehoog/NHBalancedFlowLayout/issues/22) wich occurs if the partition algorithm assigns a single item to one row.
+- Incorporates a fix for a crash on [UICollectionView insertSections:] [Pull Request #24](https://github.com/njdehoog/NHBalancedFlowLayout/pull/24)
+- It implements swipe in and out animations, when inserting or removing cells.
+
+
+Hopefully this can be useful for some of you, if you don't want the animations you can easily remove them in the code.
+
 ## Notes 
 * Tested with iOS 7, but should be compatible with iOS6 as well
 * Works with iPhone and iPad

@@ -15,6 +15,6 @@
  */
 @interface NHLinearPartition : NSObject
 
-+ (NSArray *)linearPartitionForSequence:(NSArray *)sequence numberOfPartitions:(NSInteger)numberOfPartitions;
++ (NSMutableArray *)linearPartitionForSequence:(NSArray *)sequence numberOfPartitions:(NSInteger)numberOfPartitions;
 
 @end

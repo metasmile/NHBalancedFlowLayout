@@ -313,7 +313,7 @@
 		50CAF4BC180430A6009A7FA1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Niels de Hoog";
 				TargetAttributes = {
 					50CAF4E4180430A6009A7FA1 = {
@@ -442,7 +442,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -457,6 +456,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -482,7 +482,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -521,6 +520,7 @@
 				GCC_PREFIX_HEADER = "NHBalancedFlowLayoutDemo/NHBalancedFlowLayoutDemo-Prefix.pch";
 				INFOPLIST_FILE = "NHBalancedFlowLayoutDemo/NHBalancedFlowLayoutDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.invisiblepixel.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NHBalancedFlowLayoutDemo;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -536,6 +536,7 @@
 				GCC_PREFIX_HEADER = "NHBalancedFlowLayoutDemo/NHBalancedFlowLayoutDemo-Prefix.pch";
 				INFOPLIST_FILE = "NHBalancedFlowLayoutDemo/NHBalancedFlowLayoutDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.invisiblepixel.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NHBalancedFlowLayoutDemo;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -545,7 +546,6 @@
 		50CAF4FA180430A6009A7FA1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/NHBalancedFlowLayoutDemo.app/NHBalancedFlowLayoutDemo";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -559,6 +559,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "NHBalancedFlowLayoutDemoTests/BalancedFlowLayoutDemoTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.invisiblepixel.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NHBalancedFlowLayoutDemoTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -568,7 +569,6 @@
 		50CAF4FB180430A6009A7FA1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/NHBalancedFlowLayoutDemo.app/NHBalancedFlowLayoutDemo";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -578,6 +578,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NHBalancedFlowLayoutDemo/NHBalancedFlowLayoutDemo-Prefix.pch";
 				INFOPLIST_FILE = "NHBalancedFlowLayoutDemoTests/BalancedFlowLayoutDemoTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.invisiblepixel.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NHBalancedFlowLayoutDemoTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

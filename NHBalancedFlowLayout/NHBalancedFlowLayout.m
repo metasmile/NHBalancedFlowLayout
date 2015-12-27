@@ -13,6 +13,10 @@
 {
     CGRect **_itemFrameSections;
     NSInteger _numberOfItemFrameSections;
+    
+    
+    NSMutableArray *_deleteIndexPaths, *_insertIndexPaths;
+    CGFloat centerXOffset;
 }
 
 @property (nonatomic) CGSize contentSize;
@@ -97,7 +101,7 @@
     
     NSMutableArray *headerFrames = [NSMutableArray array];
     NSMutableArray *footerFrames = [NSMutableArray array];
-
+    
     CGSize contentSize = CGSizeZero;
     
     // first release old item frame sections
@@ -107,7 +111,7 @@
     _numberOfItemFrameSections = [self.collectionView numberOfSections];
     _itemFrameSections = (CGRect **)malloc(sizeof(CGRect *) * _numberOfItemFrameSections);
     
-    for (int section = 0; section < [self.collectionView numberOfSections]; section++) {
+    for (int section = 0; section < _numberOfItemFrameSections; section++) {
         // add new item frames array to sections array
         NSInteger numberOfItemsInSections = [self.collectionView numberOfItemsInSection:section];
         CGRect *itemFrames = (CGRect *)malloc(sizeof(CGRect) * numberOfItemsInSections);
@@ -126,7 +130,7 @@
         
         CGFloat totalItemSize = [self totalItemSizeForSection:section preferredRowSize:idealHeight];
         NSInteger numberOfRows = MAX(roundf(totalItemSize / [self viewPortAvailableSize]), 1);
-    
+        
         CGPoint sectionOffset;
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
             sectionOffset = CGPointMake(0, contentSize.height + headerSize.height);
@@ -144,7 +148,7 @@
             footerFrame = CGRectMake(contentSize.width + headerSize.width + sectionSize.width, 0, footerSize.width, CGRectGetHeight(self.collectionView.bounds));
         }
         [footerFrames addObject:[NSValue valueWithCGRect:footerFrame]];
-
+        
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
             contentSize = CGSizeMake(sectionSize.width, contentSize.height + headerSize.height + sectionSize.height + footerSize.height);
         }
@@ -157,6 +161,31 @@
     self.footerFrames = [footerFrames copy];
     
     self.contentSize = contentSize;
+    CGSize size = self.collectionView.frame.size;
+    centerXOffset = 2* size.width;
+}
+
+- (void)prepareForCollectionViewUpdates:(NSArray *)updateItems {
+    // Keep track of insert and delete index paths
+    [super prepareForCollectionViewUpdates:updateItems];
+    
+    _deleteIndexPaths = [NSMutableArray array];
+    _insertIndexPaths = [NSMutableArray array];
+    
+    for (UICollectionViewUpdateItem *update in updateItems) {
+        if (update.updateAction == UICollectionUpdateActionDelete) {
+            [_deleteIndexPaths addObject:update.indexPathBeforeUpdate];
+        } else if (update.updateAction == UICollectionUpdateActionInsert) {
+            [_insertIndexPaths addObject:update.indexPathAfterUpdate];
+        }
+    }
+}
+
+- (void)finalizeCollectionViewUpdates {
+    [super finalizeCollectionViewUpdates];
+    // release the insert and delete index paths
+    _deleteIndexPaths = nil;
+    _insertIndexPaths = nil;
 }
 
 - (CGSize)collectionViewContentSize
@@ -167,17 +196,19 @@
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
 {
     NSMutableArray *layoutAttributes = [NSMutableArray array];
+    NSInteger n = [self.collectionView numberOfSections];
     
-    for (NSInteger section = 0, n = [self.collectionView numberOfSections]; section < n; section++) {
+    for (NSInteger section = 0; section < n; section++) {
         NSIndexPath *sectionIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
-
+        
         UICollectionViewLayoutAttributes *headerAttributes = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                   atIndexPath:sectionIndexPath];
         
-        if (! CGSizeEqualToSize(headerAttributes.frame.size, CGSizeZero) && CGRectIntersectsRect(headerAttributes.frame, rect)) {
+        CGSize size = headerAttributes.frame.size;
+        if (size.height != 0 && size.width != 0 && CGRectIntersectsRect(headerAttributes.frame, rect)) {
             [layoutAttributes addObject:headerAttributes];
         }
-            
+        
         for (int i = 0; i < [self.collectionView numberOfItemsInSection:section]; i++) {
             CGRect itemFrame = _itemFrameSections[section][i];
             if (CGRectIntersectsRect(rect, itemFrame)) {
@@ -188,8 +219,8 @@
         
         UICollectionViewLayoutAttributes *footerAttributes = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter
                                                                                                   atIndexPath:sectionIndexPath];
-        
-        if (! CGSizeEqualToSize(footerAttributes.frame.size, CGSizeZero) && CGRectIntersectsRect(footerAttributes.frame, rect)) {
+        size = footerAttributes.frame.size;
+        if (size.width != 0 && size.height != 0 && CGRectIntersectsRect(footerAttributes.frame, rect)) {
             [layoutAttributes addObject:footerAttributes];
         }
     }
@@ -233,6 +264,50 @@
     return NO;
 }
 
+- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+{
+    // Must call super
+    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
+    
+    if ([_insertIndexPaths containsObject:itemIndexPath]) {
+        // only change attributes on inserted cells
+        if (!attributes)
+            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+        
+        // Configure attributes ...
+        attributes.alpha = 0.5;
+        CGPoint center = attributes.center;
+        attributes.center = CGPointMake(center.x+centerXOffset, center.y);
+    }
+    
+    return attributes;
+}
+
+// Note: name of method changed
+// Also this gets called for all visible cells (not just the deleted ones) and
+// even gets called when inserting cells!
+- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+{
+    // So far, calling super hasn't been strictly necessary here, but leaving it in
+    // for good measure
+    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
+    
+    if ([_deleteIndexPaths containsObject:itemIndexPath])
+    {
+        // only change attributes on deleted cells
+        if (!attributes)
+            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+        
+        // Configure attributes ...
+        attributes.alpha = 0.5;
+        CGPoint center = attributes.center;
+        attributes.center = CGPointMake(center.x-centerXOffset, center.y);
+        //attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
+    }
+    
+    return attributes;
+}
+
 #pragma mark - Layout helpers
 
 - (CGRect)headerFrameForSection:(NSInteger)section
@@ -253,7 +328,9 @@
 - (CGFloat)totalItemSizeForSection:(NSInteger)section preferredRowSize:(CGFloat)preferredRowSize
 {
     CGFloat totalItemSize = 0;
-    for (NSInteger i = 0, n = [self.collectionView numberOfItemsInSection:section]; i < n; i++) {
+    NSUInteger n = [self.collectionView.dataSource collectionView:self.collectionView numberOfItemsInSection:section];
+    
+    for (NSInteger i = 0; i < n; i++) {
         CGSize preferredSize = [self.delegate collectionView:self.collectionView layout:self preferredSizeForItemAtIndexPath:[NSIndexPath indexPathForItem:i inSection:section]];
         
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
@@ -282,7 +359,26 @@
 - (void)setFrames:(CGRect *)frames forItemsInSection:(NSInteger)section numberOfRows:(NSUInteger)numberOfRows sectionOffset:(CGPoint)sectionOffset sectionSize:(CGSize *)sectionSize
 {
     NSArray *weights = [self weightsForItemsInSection:section];
-    NSArray *partition = [NHLinearPartition linearPartitionForSequence:weights numberOfPartitions:numberOfRows];
+    
+    if (weights.count == 0) {
+        *sectionSize = CGSizeZero;
+        return;
+    }
+    
+    NSMutableArray *partition = [NHLinearPartition linearPartitionForSequence:weights numberOfPartitions:numberOfRows];
+    
+    // workaround to remove single images in a row, by merging rows with singles
+    NSInteger lastSingle = -1;
+    for (NSInteger i = 0; i < partition.count; i++) {
+        NSArray *row = partition[i];
+        if (row.count == 1 && lastSingle >= 0) {
+            NSArray *other = partition[lastSingle];
+            partition[lastSingle] = @[other[0], row[0]];
+            [partition removeObjectAtIndex:i];
+            lastSingle = -1;
+            i--;
+        } else if (row.count == 1) lastSingle = i;
+    }
     
     int i = 0;
     CGPoint offset = CGPointMake(sectionOffset.x + self.sectionInset.left, sectionOffset.y + self.sectionInset.top);
