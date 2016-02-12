@@ -87,7 +87,7 @@
         [sequence enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             [partition addObject:@[obj]];
         }];
-        return [partition copy];
+        return [partition mutableCopy];
     }
     
     if (n == 1) {
