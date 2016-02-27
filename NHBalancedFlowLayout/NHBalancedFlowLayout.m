@@ -368,7 +368,7 @@
     NSMutableArray *partition = [NHLinearPartition linearPartitionForSequence:weights numberOfPartitions:numberOfRows];
     
     // workaround to remove single images in a row
-    for (NSInteger i = 0; i < partition.count && 2 <= partition.count; i++) {
+    for (NSInteger i = 0; i < partition.count; i++) {
         NSArray *row = partition[i];
         if (row.count == 1) {
             NSArray *prev = i > 0 ? partition[i-1] : nil;
