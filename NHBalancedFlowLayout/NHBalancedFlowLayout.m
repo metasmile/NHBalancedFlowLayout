@@ -264,49 +264,49 @@
     return NO;
 }
 
-- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
-{
-    // Must call super
-    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
-    
-    if ([_insertIndexPaths containsObject:itemIndexPath]) {
-        // only change attributes on inserted cells
-        if (!attributes)
-            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
-        
-        // Configure attributes ...
-        attributes.alpha = 0.5;
-        CGPoint center = attributes.center;
-        attributes.center = CGPointMake(center.x+centerXOffset, center.y);
-    }
-    
-    return attributes;
-}
-
-// Note: name of method changed
-// Also this gets called for all visible cells (not just the deleted ones) and
-// even gets called when inserting cells!
-- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
-{
-    // So far, calling super hasn't been strictly necessary here, but leaving it in
-    // for good measure
-    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
-    
-    if ([_deleteIndexPaths containsObject:itemIndexPath])
-    {
-        // only change attributes on deleted cells
-        if (!attributes)
-            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
-        
-        // Configure attributes ...
-        attributes.alpha = 0.5;
-        CGPoint center = attributes.center;
-        attributes.center = CGPointMake(center.x-centerXOffset, center.y);
-        //attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
-    }
-    
-    return attributes;
-}
+//- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+//{
+//    // Must call super
+//    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
+//
+//    if ([_insertIndexPaths containsObject:itemIndexPath]) {
+//        // only change attributes on inserted cells
+//        if (!attributes)
+//            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+//
+//        // Configure attributes ...
+//        attributes.alpha = 0.5;
+//        CGPoint center = attributes.center;
+//        attributes.center = CGPointMake(center.x+centerXOffset, center.y);
+//    }
+//
+//    return attributes;
+//}
+//
+//// Note: name of method changed
+//// Also this gets called for all visible cells (not just the deleted ones) and
+//// even gets called when inserting cells!
+//- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+//{
+//    // So far, calling super hasn't been strictly necessary here, but leaving it in
+//    // for good measure
+//    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
+//
+//    if ([_deleteIndexPaths containsObject:itemIndexPath])
+//    {
+//        // only change attributes on deleted cells
+//        if (!attributes)
+//            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+//
+//        // Configure attributes ...
+//        attributes.alpha = 0.5;
+//        CGPoint center = attributes.center;
+//        attributes.center = CGPointMake(center.x-centerXOffset, center.y);
+//        //attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
+//    }
+//
+//    return attributes;
+//}
 
 #pragma mark - Layout helpers
 
